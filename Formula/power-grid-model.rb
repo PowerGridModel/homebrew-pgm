@@ -14,11 +14,12 @@ class PowerGridModel < Formula
   depends_on "eigen" => :build
   depends_on "nlohmann-json" => :build
   depends_on "msgpack-cxx" => :build
+  depends_on "ninja" => :build
 
 
   def install
     system "echo", "\"#{version}\"", ">", "VERSION"
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "-GNinja", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
