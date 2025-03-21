@@ -27,15 +27,30 @@ class PowerGridModel < Formula
   end
 
   test do
-    # `test do` will create, run in and delete a temporary directory.
-    #
-    # This test will fail and we won't accept that! For Homebrew/homebrew-core
-    # this will need to be a test that verifies the functionality of the
-    # software. Run the test with `brew test power-grid-model`. Options passed
-    # to `brew install` such as `--HEAD` also need to be provided to `brew test`.
-    #
-    # The installed folder is not in the path, so use the entire path to any
-    # executables being tested: `system bin/"program", "do", "something"`.
-    system "false"
+    (testpath/"test.cpp").write <<~CPP
+      #include "power_grid_model_c.h"
+
+      #include <iostream>
+      #include <memory>
+
+      namespace {
+      // custom deleter
+      template <auto func> struct DeleterFunctor {
+          template <typename T> void operator()(T* arg) const { func(arg); }
+      };
+
+      using HandlePtr = std::unique_ptr<PGM_Handle, DeleterFunctor<&PGM_destroy_handle>>;
+      } // namespace
+
+      auto main() -> int {
+          // get handle from C-API
+          HandlePtr const c_handle{PGM_create_handle()};
+          std::cout << (c_handle ? "Handle created: C-API is available.\\n" : "No handle could be created.\\n");
+          int return_code = (c_handle != nullptr) ? 0 : 1;
+          return return_code;
+      }
+    CPP
+    system ENV.cxx, "test.cpp", "--std=c++17", "-I#{include}", "-L#{lib}", "-lpower_grid_model_c", "-o", "test"
+    system "./test"
   end
 end
