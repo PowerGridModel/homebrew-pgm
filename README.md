@@ -1,17 +1,16 @@
-# PowerGridModel Pgm
+<!--
+SPDX-FileCopyrightText: Contributors to the Power Grid Model project <powergridmodel@lfenergy.org>
 
-## How do I install these formulae?
+SPDX-License-Identifier: MPL-2.0
+-->
 
-`brew install powergridmodel/pgm/<formula>`
+# PowerGridModel homebrew tap
 
-Or `brew tap powergridmodel/pgm` and then `brew install <formula>`.
+## How do I install Power Grid Model from homebrew?
 
-Or, in a `brew bundle` `Brewfile`:
+`brew install powergridmodel/pgm/power-grid-model`
 
-```ruby
-tap "powergridmodel/pgm"
-brew "<formula>"
-```
+Or `brew tap powergridmodel/pgm` and then `brew install power-grid-model`.
 
 ## Documentation
 
