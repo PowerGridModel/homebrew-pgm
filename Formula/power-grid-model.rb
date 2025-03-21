@@ -8,6 +8,7 @@ class PowerGridModel < Formula
   url "https://github.com/PowerGridModel/power-grid-model/archive/refs/tags/v1.10.69.tar.gz"
   sha256 "870107627d9d3cc6ed2eeed382d12e9238da9ed434a18acb995e9e6c6ba1d0c3"
   license "MPL-2.0"
+  head "https://github.com/PowerGridModel/power-grid-model.git", branch: "main"
 
   depends_on "cmake" => :build
   depends_on "boost" => :build
