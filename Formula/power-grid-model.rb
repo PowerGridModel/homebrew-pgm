@@ -4,18 +4,17 @@
 
 class PowerGridModel < Formula
   desc "Python/C++ library for distribution power system analysis"
-  homepage ""
+  homepage "https://lfenergy.org/projects/power-grid-model/"
   url "https://github.com/PowerGridModel/power-grid-model/archive/refs/tags/v1.10.69.tar.gz"
   sha256 "870107627d9d3cc6ed2eeed382d12e9238da9ed434a18acb995e9e6c6ba1d0c3"
   license "MPL-2.0"
 
   depends_on "cmake" => :build
+  depends_on "boost" => :build
+  depends_on "eigen" => :build
+  depends_on "nlohmann-json" => :build
+  depends_on "msgpack-cxx" => :build
 
-  # Additional dependency
-  # resource "" do
-  #   url ""
-  #   sha256 ""
-  # end
 
   def install
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
