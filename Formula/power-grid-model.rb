@@ -18,10 +18,8 @@ class PowerGridModel < Formula
 
 
   def install
-    system "echo", "\"#{version}\"", ">", "VERSION"
-    system "ls", "-al"
-    system "pws"
-    system "cat", "VERSION"
+    system "rm", "VERSION"
+    (buildpath/"VERSION").write("#{version}")
     system "cmake", "-GNinja", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
