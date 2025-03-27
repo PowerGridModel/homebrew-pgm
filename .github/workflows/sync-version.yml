@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to the Power Grid Model project <powergridmodel@lfenergy.org>
+#
+# SPDX-License-Identifier: MPL-2.0
+
 name: Sync version of upstream repository
 
 on:
@@ -10,4 +14,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - id: get-release
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          owner: PowerGridModel
+          repo: power-grid-model
+          excludes: prerelease, draft
       
+      - id: get-sha256
+        name: Download and hash
+        run: |
+          wget -o release.tar.gz https://github.com/PowerGridModel/power-grid-model/archive/refs/tags/${{ steps.get-release.outputs.release }}.tar.gz
+          echo "sha256=$(shasum -a 256 release.tar.gz | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Render formulae
+        uses: cuchi/jinja2-action@v1.3.0
+        with:
+          template: formula_generation/power-grid-model.rb.jinja
+          output_file: Formula/power-grid-model.rb
+          variables: |
+            tag=${{ steps.get-release.outputs.release }}
+            sha256=${{ steps.get-sha256.outputs.sha256 }}
+      
+      - name: Show diff
+        run: |
+          git diff
