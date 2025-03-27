@@ -6,6 +6,8 @@ name: Sync version of upstream repository
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *" # Based on UTC time
 
 jobs:
   sync-version:
