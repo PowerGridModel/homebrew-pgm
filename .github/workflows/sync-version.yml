@@ -1,0 +1,13 @@
+name: Sync version of upstream repository
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      
