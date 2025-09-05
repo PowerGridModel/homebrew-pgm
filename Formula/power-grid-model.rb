@@ -5,8 +5,8 @@
 class PowerGridModel < Formula
   desc "Python/C++ library for distribution power system analysis"
   homepage "https://lfenergy.org/projects/power-grid-model/"
-  url "https://github.com/PowerGridModel/power-grid-model/archive/refs/tags/v1.12.24.tar.gz"
-  sha256 "71e5768e6895036fb0ef8cb06e04dbcdb2d429471ef554b69efdb464b3814dd5"
+  url "https://github.com/PowerGridModel/power-grid-model/archive/refs/tags/v1.12.26.tar.gz"
+  sha256 "9b844aa83c8894864d2ee6ee36415244defedc5fd75eae75d3b114de9634f022"
   license "MPL-2.0"
   head "https://github.com/PowerGridModel/power-grid-model.git", branch: "main"
 
