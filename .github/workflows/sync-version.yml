@@ -18,19 +18,19 @@ jobs:
 
     steps:
       - name: generate GitHub App token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         id: generate-token
         with:
           app-id: ${{ secrets.CI_BOT_APP_ID }}
           private-key: ${{ secrets.CI_BOT_PRIVATE_KEY }}
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           token: ${{ steps.generate-token.outputs.token }}
 
       - id: get-release
-        uses: pozetroninc/github-action-get-latest-release@master
+        uses: pozetroninc/github-action-get-latest-release@53d33d213ee71c72360e3c829caf7cee94ec21e2 # master
         with:
           owner: PowerGridModel
           repo: power-grid-model
@@ -43,7 +43,7 @@ jobs:
           echo "sha256=$(shasum -a 256 ${{ steps.get-release.outputs.release }}.tar.gz | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Render formulae
-        uses: cuchi/jinja2-action@v1.3.0
+        uses: cuchi/jinja2-action@8bd801365a8d36a0b20f45ee969161685de7785a # v1.3.0
         with:
           template: formula_generation/power-grid-model.rb.jinja
           output_file: Formula/power-grid-model.rb
@@ -56,7 +56,7 @@ jobs:
           git diff
 
       - name: Push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
         with:
           commit_message: Update the formula
           commit_options: '--signoff'
