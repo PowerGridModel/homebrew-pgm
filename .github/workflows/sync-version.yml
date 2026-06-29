@@ -53,9 +53,29 @@ jobs:
         run: |
           git diff
 
+      - name: Ensure only formula changes are auto-committed
+        run: |
+          changed_files=$(git diff --name-only)
+          if [ -z "$changed_files" ]; then
+            exit 0
+          fi
+
+          non_formula_changes=$(echo "$changed_files" | grep -v '^Formula/power-grid-model.rb$' || true)
+          if [ -n "$non_formula_changes" ]; then
+            echo "Unexpected changed files:"
+            echo "$non_formula_changes"
+            echo "Template or workflow changes must go through a regular PR review."
+            exit 1
+          fi
+
+      - name: Validate formula
+        run: |
+          brew audit --new Formula/power-grid-model.rb
+
       - name: Push changes
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
+          file_pattern: Formula/power-grid-model.rb
           commit_message: Update the formula
           commit_options: '--signoff'
           commit_user_name: GitHub Actions Bot
