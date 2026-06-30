@@ -10,17 +10,16 @@ class PowerGridModel < Formula
   license "MPL-2.0"
   head "https://github.com/PowerGridModel/power-grid-model.git", branch: "main"
 
-  depends_on "cmake" => :build
   depends_on "boost" => :build
+  depends_on "cmake" => :build
   depends_on "eigen" => :build
-  depends_on "nlohmann-json" => :build
   depends_on "msgpack-cxx" => :build
   depends_on "ninja" => :build
-
+  depends_on "nlohmann-json" => :build
 
   def install
-    system "rm", "VERSION"
-    (buildpath/"VERSION").write("#{version}")
+    rm buildpath/"VERSION"
+    (buildpath/"VERSION").write(version.to_s)
     system "cmake", "-GNinja", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
