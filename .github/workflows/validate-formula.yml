@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: Contributors to the Power Grid Model project <powergridmodel@lfenergy.org>
+#
+# SPDX-License-Identifier: MPL-2.0
+
+name: Validate formula
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-formula:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Validate, build and test formula
+        run: |
+          brew audit --strict Formula/power-grid-model.rb
+          brew install --build-from-source --formula ./Formula/power-grid-model.rb
+          brew test power-grid-model
