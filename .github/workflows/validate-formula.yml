@@ -22,5 +22,5 @@ jobs:
           brew tap PowerGridModel/pgm "$(pwd)"
           brew trust PowerGridModel/pgm
           brew audit --strict power-grid-model
-          brew install --build-from-source --formula ./Formula/power-grid-model.rb
+          brew install --build-from-source PowerGridModel/pgm/power-grid-model
           brew test power-grid-model
