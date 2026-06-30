@@ -18,7 +18,6 @@ class PowerGridModel < Formula
   depends_on "ninja" => :build
   depends_on "nlohmann-json" => :build
 
-
   def install
     gcc = Formula["gcc@14"]
     rm buildpath/"VERSION"
