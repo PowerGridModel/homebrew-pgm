@@ -18,8 +18,8 @@ class PowerGridModel < Formula
   depends_on "nlohmann-json" => :build
 
   def install
-    system "rm", "VERSION"
-    (buildpath/"VERSION").write("#{version}")
+    rm buildpath/"VERSION"
+    (buildpath/"VERSION").write(version.to_s)
     system "cmake", "-GNinja", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
