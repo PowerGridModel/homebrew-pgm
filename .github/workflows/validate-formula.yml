@@ -18,6 +18,7 @@ jobs:
 
       - name: Validate, build and test formula
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           brew tap PowerGridModel/pgm "$(pwd)"
           brew trust PowerGridModel/pgm
           brew audit --strict power-grid-model
