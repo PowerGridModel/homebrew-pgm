@@ -68,9 +68,11 @@ jobs:
             exit 1
           fi
 
-      - name: Validate formula
+      - name: Validate, build and test formula
         run: |
           brew audit --strict Formula/power-grid-model.rb
+          brew install --build-from-source --formula ./Formula/power-grid-model.rb
+          brew test power-grid-model
 
       - name: Push changes
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
