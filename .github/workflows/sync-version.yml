@@ -12,17 +12,15 @@ on:
 jobs:
   sync-version:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
+    environment: release
 
     steps:
       - name: generate GitHub App token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: generate-token
         with:
-          app-id: ${{ secrets.CI_BOT_APP_ID }}
-          private-key: ${{ secrets.CI_BOT_PRIVATE_KEY }}
+          client-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
 
       - name: Checkout repository
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -30,7 +28,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - id: get-release
-        uses: pozetroninc/github-action-get-latest-release@53d33d213ee71c72360e3c829caf7cee94ec21e2 # master
+        uses: pozetroninc/github-action-get-latest-release@2a61c339ea7ef0a336d1daa35ef0cb1418e7676c # v0.8.0
         with:
           owner: PowerGridModel
           repo: power-grid-model
@@ -55,9 +53,34 @@ jobs:
         run: |
           git diff
 
+      - name: Ensure only formula changes are auto-committed
+        run: |
+          changed_files=$(git diff --name-only)
+          if [ -z "$changed_files" ]; then
+            exit 0
+          fi
+
+          non_formula_changes=$(echo "$changed_files" | grep -v '^Formula/power-grid-model.rb$' || true)
+          if [ -n "$non_formula_changes" ]; then
+            echo "Unexpected changed files:"
+            echo "$non_formula_changes"
+            echo "Template or workflow changes must go through a regular PR review."
+            exit 1
+          fi
+
+      - name: Validate formula
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          brew tap PowerGridModel/pgm "$(pwd)"
+          brew trust PowerGridModel/pgm
+          brew audit --strict power-grid-model
+          brew install --build-from-source PowerGridModel/pgm/power-grid-model
+          brew test power-grid-model
+
       - name: Push changes
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
+          file_pattern: Formula/power-grid-model.rb
           commit_message: Update the formula
           commit_options: '--signoff'
           commit_user_name: GitHub Actions Bot
