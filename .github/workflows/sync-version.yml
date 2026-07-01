@@ -74,6 +74,8 @@ jobs:
           brew tap PowerGridModel/pgm "$(pwd)"
           brew trust PowerGridModel/pgm
           brew audit --strict power-grid-model
+          brew install --build-from-source PowerGridModel/pgm/power-grid-model
+          brew test power-grid-model
 
       - name: Push changes
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
