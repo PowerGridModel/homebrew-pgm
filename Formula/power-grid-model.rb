@@ -13,14 +13,19 @@ class PowerGridModel < Formula
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "eigen" => :build
+  depends_on "gcc@14" => :build
   depends_on "msgpack-cxx" => :build
   depends_on "ninja" => :build
   depends_on "nlohmann-json" => :build
 
   def install
+    gcc = Formula["gcc@14"]
     rm buildpath/"VERSION"
     (buildpath/"VERSION").write(version.to_s)
-    system "cmake", "-GNinja", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "-GNinja", "-S", ".", "-B", "build",
+           "-DCMAKE_C_COMPILER=#{gcc.opt_bin}/gcc-14",
+           "-DCMAKE_CXX_COMPILER=#{gcc.opt_bin}/g++-14",
+           *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
