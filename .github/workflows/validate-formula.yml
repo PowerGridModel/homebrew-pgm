@@ -18,16 +18,9 @@ jobs:
 
       - name: Validate formula
         run: |
-          echo "GCC version: $(gcc --version)"
-          
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           brew tap PowerGridModel/pgm "$(pwd)"
           brew trust PowerGridModel/pgm
           brew audit --strict power-grid-model
           brew install --build-from-source PowerGridModel/pgm/power-grid-model
           brew test power-grid-model
-
-
-      - name: Print CMake log
-        if: always()
-        run: cat /home/runner/.cache/Homebrew/Logs/power-grid-model/02.cmake.log || echo "Log not found"
