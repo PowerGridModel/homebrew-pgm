@@ -21,7 +21,11 @@ class PowerGridModel < Formula
   def install
     rm buildpath/"VERSION"
     (buildpath/"VERSION").write(version.to_s)
-    system_gcc_version = Utils.popen_read("gcc", "-dumpversion").strip.to_i rescue 0
+    begin
+      system_gcc_version = Utils.safe_popen_read("gcc", "-dumpversion").strip.to_i
+    rescue
+      system_gcc_version = 0
+    end
 
     # If the system GCC version is less than 14, use the GCC 14 compiler from Homebrew
     # This minimum was added because we use some features in PGM not available in older versions of GCC
