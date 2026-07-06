@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: Contributors to the Power Grid Model project <powergridmodel@lfenergy.org>
+#
+# SPDX-License-Identifier: MPL-2.0
+
+name: Validate formula
+description: Audits, installs, and tests the Power Grid Model Homebrew formula
+
+runs:
+  using: composite
+  steps:
+    - name: Validate formula
+      shell: bash
+      run: |
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        brew tap PowerGridModel/pgm "$(pwd)"
+        brew trust PowerGridModel/pgm
+        brew audit --strict power-grid-model
+        brew install --build-from-source PowerGridModel/pgm/power-grid-model
+        brew test power-grid-model
