@@ -19,13 +19,26 @@ class PowerGridModel < Formula
   depends_on "nlohmann-json" => :build
 
   def install
-    gcc = Formula["gcc@14"]
     rm buildpath/"VERSION"
     (buildpath/"VERSION").write(version.to_s)
-    system "cmake", "-GNinja", "-S", ".", "-B", "build",
-           "-DCMAKE_C_COMPILER=#{gcc.opt_bin}/gcc-14",
-           "-DCMAKE_CXX_COMPILER=#{gcc.opt_bin}/g++-14",
-           *std_cmake_args
+    begin
+      system_gcc_version = Utils.safe_popen_read("gcc", "-dumpversion").strip.to_i
+    rescue
+      system_gcc_version = 0
+    end
+
+    # If the system GCC version is less than 14, use the GCC 14 compiler from Homebrew
+    # This minimum was added because we use some features in PGM not available in older versions of GCC
+    if system_gcc_version < 14
+      gcc = Formula["gcc@14"]
+      system "cmake", "-GNinja", "-S", ".", "-B", "build",
+             "-DCMAKE_C_COMPILER=#{gcc.opt_bin}/gcc-14",
+             "-DCMAKE_CXX_COMPILER=#{gcc.opt_bin}/g++-14",
+             *std_cmake_args
+    else
+      system "cmake", "-GNinja", "-S", ".", "-B", "build",
+             *std_cmake_args
+    end
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
