@@ -27,9 +27,15 @@ class PowerGridModel < Formula
       system_gcc_version = 0
     end
 
-    # If the system GCC version is less than 14, use the GCC 14 compiler from Homebrew
-    # This minimum was added because we use some features in PGM not available in older versions of GCC
-    if system_gcc_version < 14
+    user_cxx = ENV["CXX"].to_s
+    user_cc  = ENV["CC"].to_s
+    using_non_gcc = (!user_cxx.empty? && !user_cxx.match?(/g\+\+|gcc/)) ||
+                    (!user_cc.empty?  && !user_cc.match?(/gcc/))
+
+    # If the user has not requested a non-GCC compiler and the system GCC version is less than 14,
+    # use the GCC 14 compiler from Homebrew.
+    # This minimum was added because we use some features in PGM not available in older versions of GCC.
+    if !using_non_gcc && system_gcc_version < 14
       gcc = Formula["gcc@14"]
       system "cmake", "-GNinja", "-S", ".", "-B", "build",
              "-DCMAKE_C_COMPILER=#{gcc.opt_bin}/gcc-14",
