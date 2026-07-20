@@ -32,6 +32,14 @@ jobs:
           owner: PowerGridModel
           repo: power-grid-model
           excludes: prerelease, draft
+
+      - name: Verify upstream immutable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release verify ${{ steps.get-release.outputs.release }} \
+          --repo PowerGridModel/power-grid-model
+        continue-on-error: false # explicitly fail the workflow if the release is not verified
       
       - id: get-sha256
         name: Download and hash
