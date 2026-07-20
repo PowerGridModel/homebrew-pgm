@@ -29,8 +29,8 @@ class PowerGridModel < Formula
 
     user_cxx = ENV["CXX"].to_s
     user_cc  = ENV["CC"].to_s
-    using_non_gcc = (!user_cxx.empty? && !user_cxx.match?(/g\+\+|gcc/)) ||
-                    (!user_cc.empty?  && !user_cc.match?(/gcc/))
+    using_non_gcc = (!user_cxx.empty? && !user_cxx.include?("g++")) ||
+                    (!user_cc.empty?  && !user_cc.include?("gcc"))
 
     # If the user has not requested a non-GCC compiler and the system GCC version is less than 14,
     # use the GCC 14 compiler from Homebrew.
