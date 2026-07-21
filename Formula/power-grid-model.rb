@@ -5,8 +5,8 @@
 class PowerGridModel < Formula
   desc "Python/C++ library for distribution power system analysis"
   homepage "https://lfenergy.org/projects/power-grid-model/"
-  url "https://github.com/PowerGridModel/power-grid-model/archive/refs/tags/v1.13.121.tar.gz"
-  sha256 "7b49b4cf8f16139687315d3cc90c927f6a723dc399163d34d101ae3f59f5d2fd"
+  url "https://github.com/PowerGridModel/power-grid-model/archive/refs/tags/v1.13.125.tar.gz"
+  sha256 "2cd80b37c9b8125a2216545fe60d792a8400f9c3f496440b40cda0518940e32f"
   license "MPL-2.0"
   head "https://github.com/PowerGridModel/power-grid-model.git", branch: "main"
 
@@ -27,9 +27,15 @@ class PowerGridModel < Formula
       system_gcc_version = 0
     end
 
-    # If the system GCC version is less than 14, use the GCC 14 compiler from Homebrew
-    # This minimum was added because we use some features in PGM not available in older versions of GCC
-    if system_gcc_version < 14
+    user_cxx = ENV["CXX"].to_s
+    user_cc  = ENV["CC"].to_s
+    using_non_gcc = (!user_cxx.empty? && user_cxx.exclude?("g++")) ||
+                    (!user_cc.empty?  && user_cc.exclude?("gcc"))
+
+    # If the user has not requested a non-GCC compiler and the system GCC version is less than 14,
+    # use the GCC 14 compiler from Homebrew.
+    # This minimum was added because we use some features in PGM not available in older versions of GCC.
+    if !using_non_gcc && system_gcc_version < 14
       gcc = Formula["gcc@14"]
       system "cmake", "-GNinja", "-S", ".", "-B", "build",
              "-DCMAKE_C_COMPILER=#{gcc.opt_bin}/gcc-14",
