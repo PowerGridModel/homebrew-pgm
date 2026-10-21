@@ -13,38 +13,23 @@ class PowerGridModel < Formula
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "eigen" => :build
-  depends_on "gcc@14" => :build
   depends_on "msgpack-cxx" => :build
   depends_on "ninja" => :build
   depends_on "nlohmann-json" => :build
 
+  on_linux do
+    depends_on "gcc@16" => :build
+  end
+
+  fails_with :gcc do
+    version "15"
+    cause "Use the same GCC version as in main PGM"
+  end
+
   def install
     rm buildpath/"VERSION"
     (buildpath/"VERSION").write(version.to_s)
-    begin
-      system_gcc_version = Utils.safe_popen_read("gcc", "-dumpversion").strip.to_i
-    rescue
-      system_gcc_version = 0
-    end
-
-    user_cxx = ENV["CXX"].to_s
-    user_cc  = ENV["CC"].to_s
-    using_non_gcc = (!user_cxx.empty? && user_cxx.exclude?("g++")) ||
-                    (!user_cc.empty?  && user_cc.exclude?("gcc"))
-
-    # If the user has not requested a non-GCC compiler and the system GCC version is less than 14,
-    # use the GCC 14 compiler from Homebrew.
-    # This minimum was added because we use some features in PGM not available in older versions of GCC.
-    if !using_non_gcc && system_gcc_version < 14
-      gcc = Formula["gcc@14"]
-      system "cmake", "-GNinja", "-S", ".", "-B", "build",
-             "-DCMAKE_C_COMPILER=#{gcc.opt_bin}/gcc-14",
-             "-DCMAKE_CXX_COMPILER=#{gcc.opt_bin}/g++-14",
-             *std_cmake_args
-    else
-      system "cmake", "-GNinja", "-S", ".", "-B", "build",
-             *std_cmake_args
-    end
+    system "cmake", "-GNinja", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
