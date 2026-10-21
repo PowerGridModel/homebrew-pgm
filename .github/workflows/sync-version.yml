@@ -11,7 +11,7 @@ on:
 
 jobs:
   sync-version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: generate GitHub App token
