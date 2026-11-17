@@ -11,6 +11,7 @@ class PowerGridModel < Formula
   head "https://github.com/PowerGridModel/power-grid-model.git", branch: "main"
 
   depends_on "boost" => :build
+  depends_on "cli11" => :build
   depends_on "cmake" => :build
   depends_on "eigen" => :build
   depends_on "gcc@14" => :build
